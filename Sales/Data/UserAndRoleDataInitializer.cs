@@ -39,8 +39,6 @@ namespace Sales.Data
                     userManager.AddToRoleAsync(user, "Admin").Wait();
                 }
             }
-
-
         }
 
         private static void SeedRoles(RoleManager<ApplicationRole> roleManager)

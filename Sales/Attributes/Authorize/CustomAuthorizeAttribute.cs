@@ -56,7 +56,7 @@ namespace Sales.Attributes.Authorize
                 }
                 else
                 {
-                    context.Result = new RedirectResult("~/"); //new StatusCodeResult((int)System.Net.HttpStatusCode.Unauthorized);
+                    context.Result = new RedirectResult("~/");
                     return;
                 }
             }

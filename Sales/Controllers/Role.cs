@@ -99,7 +99,6 @@ namespace Sales.Controllers
                             }
                             else
                             {
-
                                 var proposedValues = entry.CurrentValues;
                                 var databaseValues = entry.GetDatabaseValues();
 
@@ -107,12 +106,7 @@ namespace Sales.Controllers
                                 {
                                     var proposedValue = proposedValues[property];
                                     var databaseValue = databaseValues[property];
-
-                                    // TODO: decide which value should be written to database
-                                    // proposedValues[property] = <value to be saved>;
                                 }
-
-                                // Refresh original values to bypass next concurrency check
                                 entry.OriginalValues.SetValues(databaseValues);
                             }
                         }
@@ -129,10 +123,9 @@ namespace Sales.Controllers
 
         public JsonResult GetActions(string controllerName)
         {
-            //var asm = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(Controller).IsAssignableFrom(type) && type.Name == controllerName).SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public)).Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any()).Select(x => new { Controller = x.DeclaringType.Name, Action = x.Name, ReturnType = x.ReturnType.Name, Attributes = String.Join(",", x.GetCustomAttributes().Select(a => a.GetType().Name.Replace("Attribute", ""))) }).OrderBy(x => x.Controller).ThenBy(x => x.Action).ToList();
             List<string> actions = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(Controller).IsAssignableFrom(type) && type.Name == controllerName)
                 .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
-                .Where(m => m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpGetAttribute), true).Any())// || m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpPostAttribute), true).Any() || m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpPutAttribute), true).Any() || m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpPatchAttribute), true).Any() || m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpDeleteAttribute), true).Any())
+                .Where(m => m.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.HttpGetAttribute), true).Any())
                 .GroupBy(e => e.Name)
                 .Select(x => x.FirstOrDefault().Name).ToList();
             return Json(actions);
