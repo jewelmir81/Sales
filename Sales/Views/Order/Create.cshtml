@@ -1,0 +1,176 @@
+﻿@model Sales.Models.Order
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Order</h1>
+<hr />
+<div class="col-md-12">
+    <div class="row">
+        <div class="input-group mb-3 col-md-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="product">Product</label>
+            </div>
+            <select id="product" class="custom-select" asp-items="ViewBag.Products">
+                <option value="0" disabled="disabled" selected="selected">Select Product</option>
+            </select>
+        </div>
+        <div class="input-group mb-3 col-md-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Quantity</span>
+            </div>
+            <input id="quantity" type="number" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3 col-md-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon2">Unit Price</span>
+            </div>
+            <input id="unitPrice" type="number" class="form-control" placeholder="Unit Price" readonly aria-label="Unit Price" aria-describedby="basic-addon2" />
+        </div>
+        <div class="input-group mb-3 col-md-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">Total Price</span>
+            </div>
+            <input id="totalPrice" type="number" class="form-control" placeholder="Total Price" readonly aria-label="Total Price" aria-describedby="basic-addon3" />
+        </div>
+        <div class="input-group mb-3 col-md-2">
+            <button id="listingButton" type="button" class="btn btn-block btn-info">Add to List</button>
+        </div>
+    </div>
+    <form asp-action="Create" asp-controller="Order">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div id="itemDiv" class="w-100 vh-70 border border-info" style="overflow:scroll;">
+            <div class="col-md-12">
+                <div class="row" style="border-bottom:1px solid black;">
+                    <div class="col-md-4 text-center pt-1 pb-1" style="background-color:antiquewhite">Product</div>
+                    <div class="col-md-2 text-center pt-1 pb-1" style="background-color:bisque">Quantity</div>
+                    <div class="col-md-2 text-center pt-1 pb-1" style="background-color:antiquewhite">Unit Price</div>
+                    <div class="col-md-2 text-center pt-1 pb-1" style="background-color:bisque">Total Price</div>
+                    <div class="col-md-2 text-center pt-1 pb-1" style="background-color:gainsboro">Action</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group mb-3 col-md-4">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" asp-for="CustomerId"></label>
+                </div>
+                <select asp-for="CustomerId" class="custom-select" asp-items="ViewBag.CustomerId">
+                    <option value="0" disabled="disabled" selected="selected">Select Customer</option>
+                </select>
+            </div>
+            <div class="input-group mb-3 col-md-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon4">Order Date</span>
+                </div>
+                <input asp-for="OrderDate" class="form-control" aria-label="Total Price" aria-describedby="basic-addon4" />
+            </div>
+            <div class="input-group mb-3 col-md-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon5">Order Number</span>
+                </div>
+                <input asp-for="OrderNumber" class="form-control" placeholder="Order Number" aria-label="Order Number" aria-describedby="basic-addon5" />
+            </div>
+            <div class="input-group mb-3 col-md-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon6">Total</span>
+                </div>
+                <input asp-for="TotalAmount" type="number" class="form-control text-right" placeholder="Total Amount" readonly aria-label="Total Amount" aria-describedby="basic-addon6" />
+            </div>
+            <div class="input-group mb-3 col-md-2">
+                <input type="submit" value="Order" class="btn btn-block btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<input id="sl" type="hidden" value="0" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $("#product").change(function () {
+                var pid = $('#product').val();
+                var url = '/Order/GetUnitPrice';
+                $.getJSON(url, { prodId: pid }, function (data) {
+                    if ($(data).length > 0) {
+                        $("#unitPrice").val(data);
+                    }
+
+                    if ($.isNumeric($("#quantity").val())) {
+                        $("#totalPrice").val(parseFloat(data) * parseFloat($("#quantity").val()));
+                    }
+                });
+            });
+
+            $("#quantity").change(function () {
+                if ($.isNumeric($("#quantity").val()) && $.isNumeric($("#unitPrice").val())) {
+                    $("#totalPrice").val(parseFloat($("#unitPrice").val()) * parseFloat($("#quantity").val()));
+                }
+            })
+
+            $("#listingButton").click(function () {
+                var productId = $("#product").val();
+                var productName = $("#product option:selected").text();
+                var quantity = $("#quantity").val();
+                var unitPrice = $("#unitPrice").val();
+                var sl = $("#sl").val();
+                var sum = $("#totalPrice").val();
+                var item = '<div class="col-md-12">'
+                    + '<div class="row" style="border-bottom:solid black 1px;">'
+                    + '<div class="col-md-4 pt-1 pb-1" style="background-color:antiquewhite"><input id="OrderItems_' + sl + '__ProductId" name="OrderItems[' + sl + '].ProductId" type="hidden" value="' + productId + '" data-tag="ProductId" /><span class="pl-2">' + productName + '</span></div>'
+                    + '<div class="col-md-2 pt-1 pb-1" style="background-color:bisque"><input id="OrderItems_' + sl + '__Quantity" name="OrderItems[' + sl + '].Quantity" value="' + quantity + '" style="width: 100% !important; text-align: right; border:none !important; background-color:transparent;" data-tag="Quantity" /></div>'
+                    + '<div class="col-md-2 pt-1 pb-1" style="background-color:antiquewhite"><input id="OrderItems_' + sl + '__UnitPrice" name="OrderItems[' + sl + '].UnitPrice" value="' + unitPrice + '" style="width: 100% !important; text-align: right; border:none !important; background-color:transparent;" data-tag="UnitPrice" /></div>'
+                    + '<div class="col-md-2 pt-1 pb-1" style="background-color:bisque"><input id="Sum_' + sl + '__Price" value="' + sum + '" style="width: 100% !important; text-align: right; border:none !important; background-color:transparent;" data-tag="sum" /></div>'
+                    + '<div class="col-md-2 text-center pt-1 pb-1" style="background-color:gainsboro"><button id="btn_' + sl + '__remove" type="button" class="btn btn-sm btn-danger" title="Remove">Remove Me</button></div></div></div>';
+                $("#itemDiv").append(item);
+                var grandtotla = 0;
+                $("[data-tag=sum]").each(function (i) {
+                    if ($.isNumeric($(this).val())) {
+                        grandtotla += parseFloat($(this).val());
+                    }
+                })
+                $("#TotalAmount").val(grandtotla);
+                $("#sl").val(parseInt(sl) + 1);
+            });
+
+            $(this).on("click", "button[title=Remove]", function () {
+                $(this).parent().parent().remove();
+
+                var sl = 0;
+
+                $("[data-tag=ProductId]").each(function (i) {
+                    this.id = "OrderItems_" + i + "__ProductId";
+                    this.name = "OrderItems[" + i + "].ProductId";
+                });
+
+                $("[data-tag=Quantity]").each(function (i) {
+                    this.id = "OrderItems_" + i + "__Quantity";
+                    this.name = "OrderItems[" + i + "].Quantity";
+                });
+
+                $("[data-tag=UnitPrice]").each(function (i) {
+                    this.id = "OrderItems_" + i + "__UnitPrice";
+                    this.name = "OrderItems[" + i + "].UnitPrice";
+                    sl = i;
+                });
+
+                var grandtotla = 0;
+                $("[data-tag=sum]").each(function (i) {
+                    if ($.isNumeric($(this).val())) {
+                        grandtotla += parseFloat($(this).val());
+                    }
+                })
+                $("#TotalAmount").val(grandtotla);
+
+                $("#sl").val(sl);
+            });
+        })
+    </script>
+}

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Sales.ViewModels.UserRole>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<h3>
+    <a asp-action="Create">Assign roles to a user or Modify roles from a user or Remove roles from a User</a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.User)</th>
+            <th>@Html.DisplayNameFor(model => model.AssignedRoles)</th>
+            <th>@Html.DisplayNameFor(model => model.UnassignedRoles)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.User.Name)</td>
+                <td>
+                    <div class="d-flex flex-wrap">
+                        @foreach (var aItem in item.AssignedRoles)
+                        {
+                            <div class="p-2 border border-info mt-1 ml-1">@aItem.Name</div>
+                        }
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-wrap">
+                        @foreach (var aItem in item.UnassignedRoles)
+                        {
+                            <div class="p-2 border border-info mt-1 ml-1">@aItem.Name</div>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

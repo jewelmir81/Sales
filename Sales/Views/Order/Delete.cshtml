@@ -1,0 +1,74 @@
+﻿@model Sales.Models.Order
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Are you sure you want to delete this order?</h2>
+<hr />
+<table class="table table-bordered">
+    <tr style="background-color:lightgray">
+        <th class="text-center">@Html.DisplayNameFor(model => model.Customer)</th>
+        <th class="text-center">@Html.DisplayNameFor(model => model.OrderNumber)</th>
+        <th class="text-center">@Html.DisplayNameFor(model => model.OrderDate)</th>
+    </tr>
+    <tr style="background-color:antiquewhite">
+        <td>@Html.DisplayFor(model => model.Customer.FirstName)&nbsp;@Html.DisplayFor(model => model.Customer.LastName),&nbsp;&nbsp;[Ph.:@Html.DisplayFor(model => model.Customer.Phone)]<br />@Html.DisplayFor(model => model.Customer.City.Name), &nbsp;@Html.DisplayFor(model => model.Customer.City.Country.Name)</td>
+        <td class="text-center">@Html.DisplayFor(model => model.OrderNumber)</td>
+        <td class="text-center">@Html.DisplayFor(model => model.OrderDate)</td>
+    </tr>
+</table>
+<h3>Order Items</h3>
+<table class="table table-bordered">
+    <tr style="background-color:lightgray">
+        <th class="text-center">Product</th>
+        <th class="text-center">Quantity</th>
+        <th class="text-center">Unit Price</th>
+        <th class="text-center">Total Price</th>
+    </tr>
+    @for (int i = 0; i < Model.OrderItems.Count; i++)
+    {
+        var backgrundColor = string.Empty;
+        if ((i / 2) * 2 == i)
+        {
+            backgrundColor = "antiquewhite";
+        }
+        else
+        {
+            backgrundColor = "bisque";
+        }
+        var totalId = "totalPrice" + i.ToString();
+        var qtyId = "Quantity" + i.ToString();
+        var untPrcId = "UnitPrice" + i.ToString();
+        <tr style="background-color:@backgrundColor">
+            <td>@Html.DisplayFor(model => model.OrderItems[i].Product.ProductName)</td>
+            <td id="@qtyId" class="text-center" data-tag="Quantity">@Html.DisplayFor(model => model.OrderItems[i].Quantity)</td>
+            <td id="@untPrcId" class="text-right" data-tag="UnitPrice">@Html.DisplayFor(model => model.OrderItems[i].UnitPrice)</td>
+            <td id="@totalId" class="text-right" data-tag="sum"></td>
+        </tr>
+    }
+    <tr>
+        <td colspan="3" class="text-right text-uppercase">@Html.DisplayNameFor(model => model.TotalAmount)</td>
+        <td class="text-right font-weight-bolder">@Html.DisplayFor(model => model.TotalAmount)</td>
+    </tr>
+</table>
+<div>
+    <form asp-action="Delete" asp-controller="Order">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("[data-tag=sum]").each(function (i) {
+                var id = $(this).attr("id");
+                var num = id.replace(/[^\d.-]/g, '');
+                console.log(num);
+                $(this).html((parseFloat($("#Quantity" + num).html().trim()) * parseFloat($("#UnitPrice" + num).html().trim())).toFixed(2));
+            });
+        });
+    </script>
+}

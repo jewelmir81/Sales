@@ -1,0 +1,64 @@
+﻿@model Sales.ViewModels.UserRole
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>User Role</h4>
+<hr />
+<div class="col-md-12">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-form-label pt-2 pl-3 pr-2">User:</label>
+                <select asp-for="@Model.User" class="custom-select col-md-11" asp-items="ViewBag.Users">
+                    <option value="0" disabled="disabled" selected="selected">Select User</option>
+                </select>
+                <input type="hidden" asp-for="@Model.UserId" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div id="roleDiv" class="d-flex flex-wrap align-content-start vh-35 w-100 border border-info">
+                <div class="col-md-12"><h6 class="h6 text-center">Roles</h6></div>
+            </div>
+        </div>
+        <div id="buttonDiv" class="form-group">
+            <input type="submit" value="Assign, Modify or Remove Role" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $('#User').change(function () {
+            var id = $('#User').val();
+            var url = '/UserRole/GetRoles';
+            $.getJSON(url, { userId: id }, function (data) {
+                if ($(data).length > 0) {
+                    console.log(data);
+                    var items = "";
+                    var items = '<div class="col-md-12"><h6 class="h6 text-center">Roles</h6></div>';
+                    $("#roleDiv").empty();
+                    $.each(data, function (i, element) {
+                        if (element.selected === true) {
+                            items += '<div class="p-2 border border-info mt-1 ml-1"><div class="form-check"><input type="checkbox" id="RoleIds" name="RoleIds" value="' + element.text + '" checked class="form-check-input"><label class="form-check-label">' + element.text + '</label></div></div>';
+                        } else {
+                            items += '<div class="p-2 border border-info mt-1 ml-1"><div class="form-check"><input type="checkbox" id="RoleIds" name="RoleIds" value="' + element.text + '" class="form-check-input"><label class="form-check-label">' + element.text + '</label></div></div>';
+                        }
+                    });
+                    $("#roleDiv").append(items);
+                    $("#UserId").val(id);
+                }
+            });
+        });
+    </script>
+}

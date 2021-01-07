@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Sales.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create">Create New</a>
+    }
+    else
+    {
+        if (@ViewBag.Create != null)
+        {
+            <a asp-action="@ViewBag.Create.ActionName">Create New</a>
+        }
+    }
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.ID)
+            </td>
+            <td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a>
+                    <span>&nbsp;|&nbsp;</span>
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                    <span>&nbsp;|&nbsp;</span>
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                }
+                else
+                {
+                    if (@ViewBag.Edit != null)
+                    {
+                        <a asp-action="@ViewBag.Edit.ActionName" asp-route-id="@item.ID">@ViewBag.Edit.RoleName</a>
+                        <span>&nbsp;|&nbsp;</span>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a><span>&nbsp;|&nbsp;</span>
+                    if (@ViewBag.Delete != null)
+                    {
+                        <a asp-action="@ViewBag.Delete.ActionName" asp-route-id="@item.ID">@ViewBag.Delete.RoleName</a>
+                    }
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
