@@ -1,7 +1,5 @@
-# This application is a sample on Action based Authorization #
-
-----------
-
+<h1>This application is a sample on Action based Authorization</h1?
+<hr />
 ## Framework: .NET 5.0 ##
 
 **<u>USERS</u>:**<br />
