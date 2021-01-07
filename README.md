@@ -1,12 +1,12 @@
 <h1>This application is a sample on Action based Authorization</h1?
 <hr />
-## Framework: .NET 5.0 ##
+    <h2>Framework: .NET 5.0</h2>
 
 **<u>USERS</u>:**<br />
 1. User ID: admin; Password: 123456<br />
 2. User ID: Jewel; Password: 123456<br />
 3. User ID: Mir; Password: 123456
-## ##
+<hr />
 <h3>Description</h3>
 <p>The purpose of this application is to use the actions of the controllers as role and generate menu based on roles. I've shown it here, how to do this.</p>
 <p>For that purpose I've created a custom authorize attribute named CustomAuthorizeAttribute that takes controller name and the action name as parametera and applied it on the action as attribute where I want to apply.</p>
